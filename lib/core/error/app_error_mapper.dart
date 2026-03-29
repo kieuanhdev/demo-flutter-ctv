@@ -72,6 +72,21 @@ class AppErrorMapper {
     if (data is Map<String, dynamic>) {
       final msg = data['message'];
       if (msg is String && msg.trim().isNotEmpty) return msg;
+
+      final error = data['error'];
+      if (error is String && error.trim().isNotEmpty) return error;
+
+      final detail = data['detail'];
+      if (detail is String && detail.trim().isNotEmpty) return detail;
+
+      if (detail is List && detail.isNotEmpty) {
+        final first = detail.first;
+        if (first is Map<String, dynamic>) {
+          final firstMsg = first['msg'];
+          if (firstMsg is String && firstMsg.trim().isNotEmpty) return firstMsg;
+        }
+        if (first is String && first.trim().isNotEmpty) return first;
+      }
     }
     return null;
   }

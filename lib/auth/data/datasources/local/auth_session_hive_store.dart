@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:hive/hive.dart';
 
-import '../../../../../core/logger/app_logger.dart';
+import '../../../../core/logger/app_logger.dart';
 import '../../models/auth_session_dto.dart';
 
 final _log = AppLogger.get('AuthHiveStore');

@@ -63,7 +63,7 @@ class ProductsController extends GetxController {
     ever<AuthSession?>(authController.session, (session) async {
       final newUserId = session?.profile.id;
       if (newUserId == _lastUserId) {
-        _log.d('Session updated (token refresh) — skipping products reload');
+        _log.d('Session updated for same user — skipping products reload');
         return;
       }
       _lastUserId = newUserId;

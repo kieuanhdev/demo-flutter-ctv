@@ -74,7 +74,19 @@ class ProductsRemoteDataSource {
           'thumbnail': thumbnail.trim(),
       },
     );
-    return ProductDto.fromJson(response.data ?? const <String, dynamic>{});
+    final raw = response.data ?? const <String, dynamic>{};
+
+    // Some backends return only partial fields on update (e.g. missing id).
+    // Merge request values as fallback to avoid JSON parse/runtime errors.
+    final normalized = <String, dynamic>{
+      ...raw,
+      'id': (raw['id'] as num?)?.toInt() ?? id,
+      'title': raw['title'] ?? title,
+      'price': raw['price'] ?? price,
+      'category': raw['category'] ?? category,
+      'thumbnail': raw['thumbnail'] ?? thumbnail,
+    };
+    return ProductDto.fromJson(normalized);
   }
 
   Future<void> deleteProduct({required int id}) async {

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../core/logger/app_logger.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/cart_item.dart';
@@ -11,11 +12,13 @@ final _log = AppLogger.get('CartController');
 
 class CartController extends GetxController {
   CartController({
+    required this.authController,
     required this.loadCartUsecase,
     required this.saveCartUsecase,
     required this.clearCartUsecase,
   });
 
+  final AuthController authController;
   final LoadCartUsecase loadCartUsecase;
   final SaveCartUsecase saveCartUsecase;
   final ClearCartUsecase clearCartUsecase;
@@ -34,26 +37,43 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadLocalCart();
+    final userId = authController.session.value?.profile.id;
+    if (userId != null) {
+      _loadCart(userId);
+    }
+
+    ever(authController.session, (session) async {
+      final nextUserId = session?.profile.id;
+      if (nextUserId == null) {
+        items.clear();
+        updatingIds.clear();
+        return;
+      }
+      await _loadCart(nextUserId);
+    });
   }
 
-  Future<void> _loadLocalCart() async {
-    _log.i('Loading local cart...');
+  int? get _userId => authController.session.value?.profile.id;
+
+  Future<void> _loadCart(int userId) async {
+    _log.i('Loading cart for userId=$userId...');
     try {
-      final local = await loadCartUsecase();
+      final local = await loadCartUsecase(userId: userId);
       items.assignAll(local);
-      _log.i('Loaded ${local.length} items from local cart');
+      _log.i('Loaded ${local.length} items');
     } catch (e, st) {
-      _log.e('Failed to load local cart', error: e, stackTrace: st);
+      _log.e('Failed to load cart', error: e, stackTrace: st);
       items.clear();
     }
   }
 
-  Future<void> _persistLocalCart() async {
+  Future<void> _persistCart() async {
+    final userId = _userId;
+    if (userId == null) return;
     try {
-      await saveCartUsecase(items);
+      await saveCartUsecase(userId: userId, items: items);
     } catch (e, st) {
-      _log.e('Failed to persist cart to Hive', error: e, stackTrace: st);
+      _log.e('Failed to persist cart', error: e, stackTrace: st);
     }
   }
 
@@ -69,7 +89,7 @@ class CartController extends GetxController {
           quantity: existing.quantity + qty,
         );
       }
-      await _persistLocalCart();
+      await _persistCart();
     } finally {
       updatingIds.remove(product.id);
     }
@@ -85,7 +105,7 @@ class CartController extends GetxController {
         if (existing == null) return;
         items[productId] = existing.copyWith(quantity: quantity);
       }
-      await _persistLocalCart();
+      await _persistCart();
     } finally {
       updatingIds.remove(productId);
     }
@@ -108,12 +128,14 @@ class CartController extends GetxController {
   }
 
   Future<void> clear() async {
+    final userId = _userId;
     items.clear();
     updatingIds.clear();
+    if (userId == null) return;
     try {
-      await clearCartUsecase();
+      await clearCartUsecase(userId: userId);
     } catch (e, st) {
-      _log.e('Failed to clear cart in Hive', error: e, stackTrace: st);
+      _log.e('Failed to clear cart', error: e, stackTrace: st);
     }
   }
 }

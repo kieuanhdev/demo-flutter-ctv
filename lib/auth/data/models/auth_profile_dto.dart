@@ -18,14 +18,20 @@ class AuthProfileDto {
   });
 
   factory AuthProfileDto.fromJson(Map<String, dynamic> json) {
+    final firstName =
+        (json['firstName'] ?? json['first_name'] ?? '') as String;
+    final lastName = (json['lastName'] ?? json['last_name'] ?? '') as String;
+    final gender = (json['gender'] ?? '') as String;
+    final image = (json['image'] ?? '') as String;
+
     return AuthProfileDto(
       id: (json['id'] as num).toInt(),
       username: json['username'] as String,
       email: json['email'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      gender: json['gender'] as String,
-      image: json['image'] as String,
+      firstName: firstName,
+      lastName: lastName,
+      gender: gender,
+      image: image,
     );
   }
 

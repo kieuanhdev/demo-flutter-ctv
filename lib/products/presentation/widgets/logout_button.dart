@@ -11,7 +11,7 @@ class LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isLoading = authController.isLoading.value;
+      final isLoading = authController.isSigningOut.value;
       return IconButton(
         onPressed: isLoading ? null : authController.signOut,
         icon: const Icon(Icons.logout),

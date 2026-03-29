@@ -1,8 +1,11 @@
 import 'package:demo/core/logger/app_logger.dart';
 import 'package:demo/hive_encryption.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'app_binding.dart';
+import 'app_routes.dart';
 import 'auth/data/datasources/local/auth_session_hive_store.dart';
 import 'cart/data/datasources/local/cart_hive_store.dart';
 
@@ -23,8 +26,11 @@ Future<void> main() async {
     CartHiveStore.boxName,
     cipher: cipher,
   );
+  _log.i(
+    'Hive initialized with encrypted boxes: '
+    '[${AuthSessionHiveStore.boxName}, ${CartHiveStore.boxName}]',
+  );
 
-  _log.i('Hive initialized');
   _log.i('Starting app...');
   runApp(const MyApp());
 }
@@ -34,9 +40,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Center(child: Text('App skeleton'))),
+      initialBinding: AppBinding(),
+      initialRoute: AppRoutes.splash,
+      getPages: AppPages.pages,
     );
   }
 }

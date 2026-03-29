@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 
 import '../../../app_routes.dart';
 import '../controllers/auth_controller.dart';
-import '../controllers/login_form_controller.dart';
+import '../controllers/register_form_controller.dart';
 
-class LoginForm extends GetView<LoginFormController> {
-  const LoginForm({super.key});
+class RegisterForm extends GetView<RegisterFormController> {
+  const RegisterForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +19,24 @@ class LoginForm extends GetView<LoginFormController> {
         children: [
           TextFormField(
             controller: controller.usernameController,
-            keyboardType: TextInputType.text,
             textInputAction: TextInputAction.next,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: controller.validateUsername,
             decoration: const InputDecoration(
               labelText: 'Username',
-              hintText: 'your_username',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: controller.emailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: controller.validateEmail,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              hintText: 'you@example.com',
               border: OutlineInputBorder(),
             ),
           ),
@@ -33,23 +44,35 @@ class LoginForm extends GetView<LoginFormController> {
           TextFormField(
             controller: controller.passwordController,
             obscureText: true,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.next,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: controller.validatePassword,
-            onFieldSubmitted: (_) async {
-              if (!controller.validate()) return;
-              await auth.signIn(
-                username: controller.usernameController.text.trim(),
-                password: controller.passwordController.text,
-              );
-            },
             decoration: const InputDecoration(
               labelText: 'Password',
               border: OutlineInputBorder(),
             ),
           ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: controller.confirmPasswordController,
+            obscureText: true,
+            textInputAction: TextInputAction.done,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: controller.validateConfirmPassword,
+            onFieldSubmitted: (_) async {
+              if (!controller.validate()) return;
+              await auth.register(
+                username: controller.usernameController.text.trim(),
+                email: controller.emailController.text.trim(),
+                password: controller.passwordController.text,
+              );
+            },
+            decoration: const InputDecoration(
+              labelText: 'Confirm password',
+              border: OutlineInputBorder(),
+            ),
+          ),
           const SizedBox(height: 16),
-
           Obx(() {
             final err = auth.error.value;
             if (err == null || err.isEmpty) return const SizedBox.shrink();
@@ -62,18 +85,18 @@ class LoginForm extends GetView<LoginFormController> {
               ),
             );
           }),
-
           SizedBox(
             height: 48,
             child: Obx(() {
-              final isLoading = auth.isSigningIn.value;
+              final isLoading = auth.isRegistering.value;
               return ElevatedButton(
                 onPressed: isLoading
                     ? null
                     : () async {
                         if (!controller.validate()) return;
-                        await auth.signIn(
+                        await auth.register(
                           username: controller.usernameController.text.trim(),
+                          email: controller.emailController.text.trim(),
                           password: controller.passwordController.text,
                         );
                       },
@@ -83,14 +106,14 @@ class LoginForm extends GetView<LoginFormController> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Login'),
+                    : const Text('Register'),
               );
             }),
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => Get.toNamed(AppRoutes.register),
-            child: const Text("Don't have an account? Register"),
+            onPressed: () => Get.offAllNamed(AppRoutes.login),
+            child: const Text('Already have an account? Login'),
           ),
         ],
       ),

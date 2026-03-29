@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app_routes.dart';
 import '../../../cart/presentation/widgets/add_to_cart_button.dart';
 import '../../domain/entities/product.dart';
 import '../widgets/product_action_buttons.dart';
 import '../widgets/product_detail_image.dart';
 import '../widgets/product_detail_info.dart';
-import 'edit_product_page.dart';
 
 class ProductDetailPage extends StatelessWidget {
   const ProductDetailPage({super.key, required this.product});
@@ -30,7 +30,7 @@ class ProductDetailPage extends StatelessWidget {
             ProductActionButtons(
               product: product,
               onEdit: () {
-                Get.to(() => const EditProductPage());
+                Get.toNamed(AppRoutes.editProduct, arguments: product);
               },
               onDeleted: () {
                 Get.back();

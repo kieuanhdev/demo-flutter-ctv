@@ -1,5 +1,4 @@
-import 'package:demo/products/presentation/controllers/products_controller.dart'
-    show ProductsController;
+import 'package:demo/products/presentation/controllers/products_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
