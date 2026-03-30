@@ -64,41 +64,41 @@ class ProductForm extends StatelessWidget {
     return Form(
       key: formKey,
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         children: [
           LabeledTextFormField(
             fieldKey: prefix == null ? null : ValueKey('${prefix}_title'),
-            labelText: 'Title',
+            labelText: 'Tiêu đề',
             controller: form.titleController,
             textInputAction: TextInputAction.next,
             validator: (v) =>
-                v == null || v.trim().isEmpty ? 'Title is required' : null,
+                v == null || v.trim().isEmpty ? 'Vui lòng nhập tiêu đề' : null,
           ),
           const SizedBox(height: 12),
           LabeledTextFormField(
             fieldKey: prefix == null ? null : ValueKey('${prefix}_price'),
-            labelText: 'Price',
+            labelText: 'Giá',
             controller: form.priceController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textInputAction: TextInputAction.next,
             validator: (v) {
               final p = _tryParsePrice(v);
-              if (p == null) return 'Price must be a number';
-              if (p < 0) return 'Price must be >= 0';
+              if (p == null) return 'Giá phải là số';
+              if (p < 0) return 'Giá phải lớn hơn hoặc bằng 0';
               return null;
             },
           ),
           const SizedBox(height: 12),
           LabeledTextFormField(
             fieldKey: prefix == null ? null : ValueKey('${prefix}_category'),
-            labelText: 'Category (optional)',
+            labelText: 'Danh mục (tùy chọn)',
             controller: form.categoryController,
             textInputAction: TextInputAction.next,
           ),
           const SizedBox(height: 12),
           LabeledTextFormField(
             fieldKey: prefix == null ? null : ValueKey('${prefix}_thumbnail'),
-            labelText: 'Thumbnail URL (optional)',
+            labelText: 'URL ảnh (tùy chọn)',
             controller: form.thumbnailController,
             keyboardType: TextInputType.url,
             textInputAction: TextInputAction.done,
@@ -115,7 +115,7 @@ class ProductForm extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Icon(submitIcon),
-              label: Text(submitting ? 'Please wait...' : submitLabel),
+              label: Text(submitting ? 'Đang xử lý...' : submitLabel),
             );
           }),
         ],
@@ -155,10 +155,7 @@ class LabeledTextFormField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
-      decoration: InputDecoration(
-        labelText: labelText,
-        border: const OutlineInputBorder(),
-      ),
+      decoration: InputDecoration(labelText: labelText),
       validator: validator,
     );
   }

@@ -12,14 +12,14 @@ class AddProductPage extends GetView<AddProductController> {
     final c = controller;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Product')),
+      appBar: AppBar(title: const Text('Thêm sản phẩm')),
       body: SafeArea(
         child: ProductForm(
           formKey: c.formKey,
           form: c.form,
           isSubmitting: c.productsController.isAdding,
           onSubmit: c.submit,
-          submitLabel: 'Add',
+          submitLabel: 'Thêm',
           submitIcon: Icons.add,
           fieldKeyPrefix: 'add',
         ),

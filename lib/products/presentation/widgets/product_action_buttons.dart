@@ -16,19 +16,23 @@ class ProductActionButtons extends GetView<ProductsController> {
   final VoidCallback onEdit;
   final VoidCallback onDeleted;
 
-  Future<void> _confirmAndDelete() async {
+  Future<void> _confirmAndDelete(BuildContext context) async {
+    final scheme = Theme.of(context).colorScheme;
     final ok = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Delete product'),
-        content: Text('Are you sure you want to delete "${product.title}"?'),
+        title: const Text('Xóa sản phẩm'),
+        content: Text('Bạn có chắc muốn xóa "${product.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
+            child: const Text('Hủy'),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Xóa',
+              style: TextStyle(color: scheme.error),
+            ),
           ),
         ],
       ),
@@ -38,7 +42,7 @@ class ProductActionButtons extends GetView<ProductsController> {
 
     await controller.deleteProduct(id: product.id);
     if (controller.error.value != null) {
-      Get.snackbar('Error', controller.error.value!);
+      Get.snackbar('Lỗi', controller.error.value!);
       return;
     }
     onDeleted();
@@ -52,7 +56,7 @@ class ProductActionButtons extends GetView<ProductsController> {
           child: FilledButton.icon(
             onPressed: onEdit,
             icon: const Icon(Icons.edit),
-            label: const Text('Edit'),
+            label: const Text('Sửa'),
           ),
         ),
         const SizedBox(width: 12),
@@ -60,9 +64,9 @@ class ProductActionButtons extends GetView<ProductsController> {
           child: Obx(() {
             final isDeleting = controller.deletingIds.contains(product.id);
             return OutlinedButton.icon(
-              onPressed: isDeleting ? null : _confirmAndDelete,
+              onPressed: isDeleting ? null : () => _confirmAndDelete(context),
               icon: const Icon(Icons.delete_outline),
-              label: Text(isDeleting ? 'Deleting...' : 'Delete'),
+              label: Text(isDeleting ? 'Đang xóa...' : 'Xóa'),
             );
           }),
         ),

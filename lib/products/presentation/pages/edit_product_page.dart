@@ -12,14 +12,14 @@ class EditProductPage extends GetView<EditProductController> {
     final c = controller;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Product')),
+      appBar: AppBar(title: const Text('Sửa sản phẩm')),
       body: SafeArea(
         child: ProductForm(
           formKey: c.formKey,
           form: c.form,
           isSubmitting: c.productsController.isUpdating,
           onSubmit: c.submit,
-          submitLabel: 'Save',
+          submitLabel: 'Lưu',
           submitIcon: Icons.save,
           fieldKeyPrefix: 'edit_${c.product.id}',
         ),

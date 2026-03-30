@@ -29,12 +29,12 @@ class AddProductController extends GetxController {
 
     if (created != null) {
       Get.back(result: created);
-      Get.snackbar('Success', 'Added product: ${created.title}');
+      Get.snackbar('Thành công', 'Đã thêm: ${created.title}');
     } else {
       _log.e('Add product failed: ${productsController.error.value}');
       Get.snackbar(
-        'Error',
-        productsController.error.value ?? 'Add product failed',
+        'Lỗi',
+        productsController.error.value ?? 'Không thể thêm sản phẩm',
       );
     }
   }

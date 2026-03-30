@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:demo/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../cart/presentation/controllers/cart_controller.dart';
+import '../../../cart/presentation/widgets/add_to_cart_fly.dart';
 import '../../domain/entities/product.dart';
-import '../controllers/products_controller.dart';
 
-class ProductListItem extends GetView<ProductsController> {
+class ProductListItem extends StatefulWidget {
   const ProductListItem({
     super.key,
     required this.product,
@@ -20,10 +20,17 @@ class ProductListItem extends GetView<ProductsController> {
   final VoidCallback onTap;
 
   @override
+  State<ProductListItem> createState() => _ProductListItemState();
+}
+
+class _ProductListItemState extends State<ProductListItem> {
+  final GlobalKey _thumbKey = GlobalKey(debugLabel: 'productThumb');
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -32,88 +39,104 @@ class ProductListItem extends GetView<ProductsController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: product.thumbnail != null
-                    ? CachedNetworkImage(
-                        imageUrl: product.thumbnail!,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, _, __) => Container(
-                          height: 120,
-                          color: Colors.grey.shade200,
-                          child: const Center(child: Icon(Icons.broken_image)),
-                        ),
-                      )
-                    : Container(
-                        height: 120,
-                        width: double.infinity,
-                        color: Colors.grey.shade200,
-                        child: const Center(
-                          child: Icon(Icons.inventory_2_outlined),
-                        ),
-                      ),
+              Expanded(
+                child: RepaintBoundary(
+                  key: _thumbKey,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: widget.product.thumbnail != null
+                        ? CachedNetworkImage(
+                            imageUrl: widget.product.thumbnail!,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, _, _) => Container(
+                              width: double.infinity,
+                              color: context.appCustomColors.imagePlaceholder,
+                              child: const Center(
+                                child: Icon(Icons.broken_image),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            width: double.infinity,
+                            color: context.appCustomColors.imagePlaceholder,
+                            child: const Center(
+                              child: Icon(Icons.inventory_2_outlined),
+                            ),
+                          ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               Text(
-                product.title,
+                widget.product.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
-                product.category ?? ' ',
+                widget.product.category ?? ' ',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-              const Spacer(),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  Text('\$${product.price.toStringAsFixed(2)}'),
+                  Text('${widget.product.price.toStringAsFixed(2)} đ'),
                   const Spacer(),
                   Obx(() {
-                    final qty = cartController.items[product.id]?.quantity ?? 0;
-                    final isUpdating = cartController.updatingIds.contains(
-                      product.id,
+                    final qty =
+                        widget.cartController.items[widget.product.id]?.quantity ??
+                            0;
+                    final isUpdating = widget.cartController.updatingIds.contains(
+                      widget.product.id,
                     );
 
                     return Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        SizedBox(
-                          width: 44,
-                          height: 44,
-                          child: ElevatedButton(
-                            onPressed: isUpdating
-                                ? null
-                                : () async {
-                                    await cartController.add(product);
-                                    Get.snackbar(
-                                      'Added to cart',
-                                      qty > 0
-                                          ? 'Now in cart: ${qty + 1}'
-                                          : product.title,
-                                    );
-                                  },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: isUpdating
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.add),
-                          ),
+                        Builder(
+                          builder: (btnCtx) {
+                            return SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: ElevatedButton(
+                                onPressed: isUpdating
+                                    ? null
+                                    : () async {
+                                        await addProductWithFlyToCart(
+                                          context: context,
+                                          product: widget.product,
+                                          startRect:
+                                              globalBoundsOf(
+                                                _thumbKey.currentContext,
+                                              ) ??
+                                              globalBoundsOf(btnCtx),
+                                        );
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: context
+                                      .appCustomColors
+                                      .addToCartButton,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: isUpdating
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(Icons.add),
+                              ),
+                            );
+                          },
                         ),
                         if (qty > 0)
                           Positioned(
@@ -121,11 +144,14 @@ class ProductListItem extends GetView<ProductsController> {
                             right: -6,
                             child: CircleAvatar(
                               radius: 10,
-                              backgroundColor: Colors.red,
+                              backgroundColor: context
+                                  .appCustomColors
+                                  .cartQuantityBadge,
                               child: Text(
                                 '$qty',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onError,
                                   fontSize: 10,
                                 ),
                               ),

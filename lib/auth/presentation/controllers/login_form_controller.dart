@@ -5,6 +5,9 @@ class LoginFormController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final obscurePassword = true.obs;
+
+  void toggleObscurePassword() => obscurePassword.toggle();
 
   String? validateUsername(String? value) {
     final username = value?.trim() ?? '';

@@ -1,4 +1,5 @@
 import '../../../core/logger/app_logger.dart';
+import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/cart_item.dart';
 import '../../domain/repository/cart_repository.dart';
 import '../datasources/local/cart_hive_store.dart';
@@ -35,29 +36,44 @@ class CartRepositoryImpl implements CartRepository {
 
       final remoteProducts =
           remoteCart['products'] as List<dynamic>? ?? const <dynamic>[];
-      if (remoteProducts.isEmpty || localItems.isEmpty) {
-        _log.d('loadItems → remote/local empty, using local ${localItems.length}');
+
+      /// Máy đã có giỏ local → giữ số lượng Hive; ghi đè lại server (merge: false)
+      /// để sửa các lần PUT trước từng bị API gộp/cộng dồn (DummyJSON).
+      if (localItems.isNotEmpty) {
+        if (remoteCartId != null) {
+          try {
+            final products = localItems.values
+                .map(
+                  (item) => <String, dynamic>{
+                    'id': item.product.id,
+                    'quantity': item.quantity,
+                  },
+                )
+                .toList();
+            await remoteDataSource.updateCart(
+              cartId: remoteCartId,
+              products: products,
+              merge: false,
+            );
+            _log.d(
+              'loadItems → reconciled server with local (${localItems.length} items)',
+            );
+          } catch (e) {
+            _log.w('loadItems → reconcile server skipped: $e');
+          }
+        }
         return localItems;
       }
 
-      final remoteQtyById = <int, int>{};
-      for (final p in remoteProducts) {
-        if (p is! Map<String, dynamic>) continue;
-        final id = (p['id'] as num?)?.toInt();
-        final qty = (p['quantity'] as num?)?.toInt() ?? 0;
-        if (id != null && qty > 0) remoteQtyById[id] = qty;
+      if (remoteProducts.isEmpty) {
+        _log.d('loadItems → local & remote empty');
+        return localItems;
       }
 
-      final merged = <int, CartItem>{};
-      for (final entry in localItems.entries) {
-        final remoteQty = remoteQtyById[entry.key];
-        if (remoteQty == null || remoteQty <= 0) continue;
-        merged[entry.key] = entry.value.copyWith(quantity: remoteQty);
-      }
-
-      await localStore.writeItems(merged);
-      _log.d('loadItems → merged remote quantities, ${merged.length} items');
-      return merged;
+      final hydrated = _hydrateFromRemoteProducts(remoteProducts);
+      await localStore.writeItems(hydrated);
+      _log.d('loadItems → hydrated from remote, ${hydrated.length} items');
+      return hydrated;
     } catch (e) {
       _log.e('loadItems → remote sync failed, fallback local', error: e);
       return localItems;
@@ -92,10 +108,22 @@ class CartRepositoryImpl implements CartRepository {
         if (createdId != null) {
           await localStore.writeServerCartId(createdId);
         }
+        _log.i(
+          'saveItems → synced to server (POST /carts/add, '
+          'serverCartId=${createdId ?? "?"}, items=${products.length})',
+        );
         return;
       }
 
-      await remoteDataSource.updateCart(cartId: serverCartId, products: products);
+      await remoteDataSource.updateCart(
+        cartId: serverCartId,
+        products: products,
+        merge: false,
+      );
+      _log.i(
+        'saveItems → synced to server (PUT /carts/$serverCartId, '
+        'items=${products.length})',
+      );
     } catch (e) {
       _log.e('saveItems → remote sync failed', error: e);
     }
@@ -114,4 +142,33 @@ class CartRepositoryImpl implements CartRepository {
     }
     await localStore.clearServerCartId();
   }
+}
+
+/// Ghép dòng từ GET cart (DummyJSON: id, title, price, quantity, thumbnail…).
+Map<int, CartItem> _hydrateFromRemoteProducts(List<dynamic> remoteProducts) {
+  final map = <int, CartItem>{};
+  for (final raw in remoteProducts) {
+    if (raw is! Map<String, dynamic>) continue;
+    final id = (raw['id'] as num?)?.toInt();
+    final qty = (raw['quantity'] as num?)?.toInt() ?? 0;
+    final title = raw['title'] as String?;
+    final price = (raw['price'] as num?)?.toDouble();
+    if (id == null || qty <= 0 || title == null || price == null) continue;
+
+    final product = Product(
+      id: id,
+      title: title,
+      price: price,
+      category: raw['category'] as String?,
+      thumbnail: raw['thumbnail'] as String?,
+    );
+    final line = CartItem(product: product, quantity: qty);
+    final existing = map[id];
+    if (existing == null) {
+      map[id] = line;
+    } else {
+      map[id] = existing.copyWith(quantity: existing.quantity + qty);
+    }
+  }
+  return map;
 }

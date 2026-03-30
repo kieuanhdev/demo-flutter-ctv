@@ -41,10 +41,13 @@ class EditProductController extends GetxController {
 
     if (updated != null) {
       Get.back(result: updated);
-      Get.snackbar('Success', 'Updated: ${updated.title}');
+      Get.snackbar('Thành công', 'Đã cập nhật: ${updated.title}');
     } else {
       _log.e('Edit failed: ${productsController.error.value}');
-      Get.snackbar('Error', productsController.error.value ?? 'Update failed');
+      Get.snackbar(
+        'Lỗi',
+        productsController.error.value ?? 'Cập nhật thất bại',
+      );
     }
   }
 

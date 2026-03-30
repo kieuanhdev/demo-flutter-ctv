@@ -29,7 +29,7 @@ class CartItemTile extends GetView<CartController> {
           : const Icon(Icons.inventory_2_outlined),
       title: Text(item.product.title),
       subtitle: Text(
-        'Price: ${item.product.price} • Subtotal: ${item.subtotal}',
+        'Giá: ${item.product.price} • Tạm tính: ${item.subtotal}',
       ),
       trailing: SizedBox(
         width: 160,

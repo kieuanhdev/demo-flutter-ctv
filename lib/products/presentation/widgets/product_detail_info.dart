@@ -13,11 +13,11 @@ class ProductDetailInfo extends StatelessWidget {
       children: [
         Text(product.title, style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
-        Text('ID: ${product.id}'),
+        Text('Mã: ${product.id}'),
         const SizedBox(height: 8),
-        Text('Price: ${product.price.toStringAsFixed(2)}'),
+        Text('Giá: ${product.price.toStringAsFixed(2)}'),
         const SizedBox(height: 8),
-        if (product.category != null) Text('Category: ${product.category}'),
+        if (product.category != null) Text('Danh mục: ${product.category}'),
       ],
     );
   }

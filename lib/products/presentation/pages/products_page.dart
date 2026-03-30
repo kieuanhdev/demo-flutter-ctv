@@ -1,6 +1,8 @@
+import 'package:demo/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app_routes.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../cart/presentation/pages/cart_page.dart';
 import '../../../cart/presentation/widgets/cart_icon_button.dart';
@@ -9,7 +11,6 @@ import '../controllers/product_search_bar.dart';
 import '../controllers/products_controller.dart';
 import '../widgets/logout_button.dart';
 import '../widgets/product_grid.dart';
-import 'add_product_page.dart';
 import 'product_detail_page.dart';
 
 class ProductsPage extends GetView<ProductsController> {
@@ -21,8 +22,9 @@ class ProductsPage extends GetView<ProductsController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Products'),
+        title: const Text('Sản phẩm'),
         actions: [
+          const ThemeModeMenuButton(),
           CartIconButton(
             onPressed: () {
               Get.to(() => const CartPage());
@@ -32,8 +34,9 @@ class ProductsPage extends GetView<ProductsController> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        tooltip: 'Thêm sản phẩm',
         onPressed: () {
-          Get.to(() => const AddProductPage());
+          Get.toNamed(AppRoutes.addProduct);
         },
         child: const Icon(Icons.add),
       ),

@@ -1,4 +1,5 @@
 import 'package:demo/core/logger/app_logger.dart';
+import 'package:demo/core/theme/theme.dart';
 import 'package:demo/hive_encryption.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ Future<void> main() async {
 
   _log.d('Initializing Hive...');
   await Hive.initFlutter();
+  await Hive.openBox<String>('app_prefs');
+  Get.put(ThemeController(), permanent: true);
   final cipher = await HiveEncryption.buildCipher();
   await HiveEncryption.openEncryptedStringBox(
     AuthSessionHiveStore.boxName,
@@ -40,11 +43,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialBinding: AppBinding(),
-      initialRoute: AppRoutes.splash,
-      getPages: AppPages.pages,
+    final themeController = Get.find<ThemeController>();
+    return Obx(
+      () => GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: themeController.themeMode.value,
+        initialBinding: AppBinding(),
+        initialRoute: AppRoutes.splash,
+        getPages: AppPages.pages,
+      ),
     );
   }
 }

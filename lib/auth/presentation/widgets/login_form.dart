@@ -8,6 +8,8 @@ import '../controllers/login_form_controller.dart';
 class LoginForm extends GetView<LoginFormController> {
   const LoginForm({super.key});
 
+  static const _fieldDecoration = InputDecoration();
+
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthController>();
@@ -23,74 +25,78 @@ class LoginForm extends GetView<LoginFormController> {
             textInputAction: TextInputAction.next,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: controller.validateUsername,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              hintText: 'your_username',
-              border: OutlineInputBorder(),
+            decoration: _fieldDecoration.copyWith(
+              labelText: 'Tên đăng nhập',
             ),
           ),
           const SizedBox(height: 12),
-          TextFormField(
-            controller: controller.passwordController,
-            obscureText: true,
-            textInputAction: TextInputAction.done,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: controller.validatePassword,
-            onFieldSubmitted: (_) async {
-              if (!controller.validate()) return;
-              await auth.signIn(
-                username: controller.usernameController.text.trim(),
-                password: controller.passwordController.text,
-              );
-            },
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              border: OutlineInputBorder(),
+          Obx(
+            () => TextFormField(
+              controller: controller.passwordController,
+              obscureText: controller.obscurePassword.value,
+              textInputAction: TextInputAction.done,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: controller.validatePassword,
+              onFieldSubmitted: (_) async {
+                if (!controller.validate()) return;
+                await auth.signIn(
+                  username: controller.usernameController.text.trim(),
+                  password: controller.passwordController.text,
+                );
+              },
+              decoration: _fieldDecoration.copyWith(
+                labelText: 'Mật khẩu',
+                suffixIcon: IconButton(
+                  onPressed: controller.toggleObscurePassword,
+                  icon: Icon(
+                    controller.obscurePassword.value
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
+                  tooltip: controller.obscurePassword.value
+                      ? 'Hiện mật khẩu'
+                      : 'Ẩn mật khẩu',
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16),
-
           Obx(() {
             final err = auth.error.value;
             if (err == null || err.isEmpty) return const SizedBox.shrink();
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                'Error: $err',
-                style: const TextStyle(color: Colors.red),
+                err,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
                 textAlign: TextAlign.center,
               ),
             );
           }),
-
-          SizedBox(
-            height: 48,
-            child: Obx(() {
-              final isLoading = auth.isSigningIn.value;
-              return ElevatedButton(
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        if (!controller.validate()) return;
-                        await auth.signIn(
-                          username: controller.usernameController.text.trim(),
-                          password: controller.passwordController.text,
-                        );
-                      },
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Login'),
-              );
-            }),
-          ),
-          const SizedBox(height: 8),
+          Obx(() {
+            final isLoading = auth.isSigningIn.value;
+            return FilledButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (!controller.validate()) return;
+                      await auth.signIn(
+                        username: controller.usernameController.text.trim(),
+                        password: controller.passwordController.text,
+                      );
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Đăng nhập'),
+            );
+          }),
           TextButton(
             onPressed: () => Get.toNamed(AppRoutes.register),
-            child: const Text("Don't have an account? Register"),
+            child: const Text('Chưa có tài khoản? Đăng ký'),
           ),
         ],
       ),

@@ -38,11 +38,13 @@ class CartRemoteDataSource {
   Future<Map<String, dynamic>> updateCart({
     required int cartId,
     required List<Map<String, dynamic>> products,
+    /// DummyJSON: `true` gộp thêm vào giỏ cũ (dễ bị cộng dồn số lượng). Luôn false để thay toàn bộ danh sách gửi lên.
+    bool merge = false,
   }) async {
-    _log.i('PUT /carts/$cartId (items: ${products.length})');
+    _log.i('PUT /carts/$cartId (items: ${products.length}, merge: $merge)');
     final response = await dio.put<Map<String, dynamic>>(
       '/carts/$cartId',
-      data: <String, dynamic>{'products': products},
+      data: <String, dynamic>{'merge': merge, 'products': products},
     );
     return response.data ?? const <String, dynamic>{};
   }

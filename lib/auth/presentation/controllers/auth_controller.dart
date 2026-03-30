@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 import '../../../app_routes.dart';
-import '../../../cart/presentation/controllers/cart_controller.dart';
 import '../../../core/error/app_error_mapper.dart';
 import '../../../core/logger/app_logger.dart';
 import '../../domain/entities/auth_session.dart';
@@ -91,10 +90,6 @@ class AuthController extends GetxController {
     try {
       await signOutUsecase();
 
-      if (Get.isRegistered<CartController>()) {
-        await Get.find<CartController>().clear();
-      }
-
       session.value = null;
       _log.i('Sign out complete — session cleared');
       Get.offAllNamed(AppRoutes.login);
@@ -111,6 +106,7 @@ class AuthController extends GetxController {
     required String email,
     required String password,
   }) async {
+    // Get.back();
     _log.i('Register attempt — user: $username');
     isRegistering.value = true;
     error.value = null;
@@ -122,14 +118,20 @@ class AuthController extends GetxController {
         password: password,
       );
       _log.i('Register success — user: $username');
-      Get.snackbar('Success', 'Register successful. Please login.');
-      Get.offAllNamed(AppRoutes.login);
+      Get.back();
+      Get.snackbar(
+        'Thành công',
+        'Đăng ký thành công. Vui lòng đăng nhập.',
+      );
     } catch (e, st) {
       error.value = AppErrorMapper.message(e);
       _log.e('Register failed', error: e, stackTrace: st);
     } finally {
+      // Get.back();
+
+      // Get.snackbar('Success', 'Register successful. Please login.');
+
       isRegistering.value = false;
     }
   }
-
 }

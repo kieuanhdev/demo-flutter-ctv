@@ -13,6 +13,7 @@ class LogoutButton extends StatelessWidget {
     return Obx(() {
       final isLoading = authController.isSigningOut.value;
       return IconButton(
+        tooltip: 'Đăng xuất',
         onPressed: isLoading ? null : authController.signOut,
         icon: const Icon(Icons.logout),
       );

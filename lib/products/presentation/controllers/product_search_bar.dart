@@ -8,13 +8,13 @@ class ProductSearchBar extends GetView<ProductsController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
       child: TextField(
         controller: controller.searchTextController,
         onChanged: controller.onSearchChanged,
         decoration: InputDecoration(
           prefixIcon: const Icon(Icons.search),
-          hintText: 'Search products...',
+          hintText: 'Tìm sản phẩm...',
           suffixIcon: Obx(() {
             final hasText = controller.searchQuery.value.trim().isNotEmpty;
             if (!hasText) return const SizedBox.shrink();
@@ -26,7 +26,6 @@ class ProductSearchBar extends GetView<ProductsController> {
               },
             );
           }),
-          border: const OutlineInputBorder(),
           isDense: true,
         ),
       ),

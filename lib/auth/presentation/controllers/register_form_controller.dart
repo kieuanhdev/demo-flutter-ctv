@@ -7,6 +7,12 @@ class RegisterFormController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final obscurePassword = true.obs;
+  final obscureConfirmPassword = true.obs;
+
+  void toggleObscurePassword() => obscurePassword.toggle();
+
+  void toggleObscureConfirmPassword() => obscureConfirmPassword.toggle();
 
   String? validateUsername(String? value) {
     final username = value?.trim() ?? '';

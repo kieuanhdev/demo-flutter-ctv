@@ -20,7 +20,7 @@ class ProductGrid extends GetView<ProductsController> {
       }
 
       if (controller.error.value != null && controller.products.isEmpty) {
-        return Center(child: Text('Error: ${controller.error.value}'));
+        return Center(child: Text('Lỗi: ${controller.error.value}'));
       }
 
       return NotificationListener<ScrollNotification>(
@@ -37,7 +37,7 @@ class ProductGrid extends GetView<ProductsController> {
         child: RefreshIndicator(
           onRefresh: controller.refreshProducts,
           child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 12,

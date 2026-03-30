@@ -9,13 +9,13 @@ class CartSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Total', style: TextStyle(fontSize: 18)),
+              const Text('Tổng cộng', style: TextStyle(fontSize: 18)),
               Text(
                 totalPrice.toStringAsFixed(2),
                 style: const TextStyle(
@@ -30,9 +30,9 @@ class CartSummary extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: () {
-                Get.snackbar('Checkout', 'Not implemented');
+                Get.snackbar('Thanh toán', 'Chưa triển khai');
               },
-              child: const Text('Checkout'),
+              child: const Text('Thanh toán'),
             ),
           ),
         ],

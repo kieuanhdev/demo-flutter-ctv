@@ -1,8 +1,11 @@
+import 'package:demo/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app_routes.dart';
+import '../../../cart/presentation/pages/cart_page.dart';
 import '../../../cart/presentation/widgets/add_to_cart_button.dart';
+import '../../../cart/presentation/widgets/cart_icon_button.dart';
 import '../../domain/entities/product.dart';
 import '../widgets/product_action_buttons.dart';
 import '../widgets/product_detail_image.dart';
@@ -16,10 +19,21 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Detail')),
+      appBar: AppBar(
+        title: const Text('Chi tiết sản phẩm'),
+        actions: [
+          const ThemeModeMenuButton(),
+          CartIconButton(
+            attachFlyTarget: false,
+            onPressed: () {
+              Get.to(() => const CartPage());
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           children: [
             ProductDetailImage(thumbnail: product.thumbnail),
             const SizedBox(height: 16),

@@ -8,6 +8,8 @@ import '../controllers/register_form_controller.dart';
 class RegisterForm extends GetView<RegisterFormController> {
   const RegisterForm({super.key});
 
+  static const _fieldDecoration = InputDecoration();
+
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthController>();
@@ -20,12 +22,10 @@ class RegisterForm extends GetView<RegisterFormController> {
           TextFormField(
             controller: controller.usernameController,
             textInputAction: TextInputAction.next,
+            textCapitalization: TextCapitalization.none,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: controller.validateUsername,
-            decoration: const InputDecoration(
-              labelText: 'Username',
-              border: OutlineInputBorder(),
-            ),
+            decoration: _fieldDecoration.copyWith(labelText: 'Tên đăng nhập'),
           ),
           const SizedBox(height: 12),
           TextFormField(
@@ -34,42 +34,65 @@ class RegisterForm extends GetView<RegisterFormController> {
             textInputAction: TextInputAction.next,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: controller.validateEmail,
-            decoration: const InputDecoration(
+            decoration: _fieldDecoration.copyWith(
               labelText: 'Email',
-              hintText: 'you@example.com',
-              border: OutlineInputBorder(),
+              hintText: 'ban@email.com',
             ),
           ),
           const SizedBox(height: 12),
-          TextFormField(
-            controller: controller.passwordController,
-            obscureText: true,
-            textInputAction: TextInputAction.next,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: controller.validatePassword,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              border: OutlineInputBorder(),
+          Obx(
+            () => TextFormField(
+              controller: controller.passwordController,
+              obscureText: controller.obscurePassword.value,
+              textInputAction: TextInputAction.next,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: controller.validatePassword,
+              decoration: _fieldDecoration.copyWith(
+                labelText: 'Mật khẩu',
+                suffixIcon: IconButton(
+                  onPressed: controller.toggleObscurePassword,
+                  icon: Icon(
+                    controller.obscurePassword.value
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
+                  tooltip: controller.obscurePassword.value
+                      ? 'Hiện mật khẩu'
+                      : 'Ẩn mật khẩu',
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 12),
-          TextFormField(
-            controller: controller.confirmPasswordController,
-            obscureText: true,
-            textInputAction: TextInputAction.done,
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: controller.validateConfirmPassword,
-            onFieldSubmitted: (_) async {
-              if (!controller.validate()) return;
-              await auth.register(
-                username: controller.usernameController.text.trim(),
-                email: controller.emailController.text.trim(),
-                password: controller.passwordController.text,
-              );
-            },
-            decoration: const InputDecoration(
-              labelText: 'Confirm password',
-              border: OutlineInputBorder(),
+          Obx(
+            () => TextFormField(
+              controller: controller.confirmPasswordController,
+              obscureText: controller.obscureConfirmPassword.value,
+              textInputAction: TextInputAction.done,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: controller.validateConfirmPassword,
+              onFieldSubmitted: (_) async {
+                if (!controller.validate()) return;
+                await auth.register(
+                  username: controller.usernameController.text.trim(),
+                  email: controller.emailController.text.trim(),
+                  password: controller.passwordController.text,
+                );
+              },
+              decoration: _fieldDecoration.copyWith(
+                labelText: 'Xác nhận mật khẩu',
+                suffixIcon: IconButton(
+                  onPressed: controller.toggleObscureConfirmPassword,
+                  icon: Icon(
+                    controller.obscureConfirmPassword.value
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
+                  tooltip: controller.obscureConfirmPassword.value
+                      ? 'Hiện mật khẩu'
+                      : 'Ẩn mật khẩu',
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -79,41 +102,37 @@ class RegisterForm extends GetView<RegisterFormController> {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                'Error: $err',
-                style: const TextStyle(color: Colors.red),
+                err,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
                 textAlign: TextAlign.center,
               ),
             );
           }),
-          SizedBox(
-            height: 48,
-            child: Obx(() {
-              final isLoading = auth.isRegistering.value;
-              return ElevatedButton(
-                onPressed: isLoading
-                    ? null
-                    : () async {
-                        if (!controller.validate()) return;
-                        await auth.register(
-                          username: controller.usernameController.text.trim(),
-                          email: controller.emailController.text.trim(),
-                          password: controller.passwordController.text,
-                        );
-                      },
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Register'),
-              );
-            }),
-          ),
-          const SizedBox(height: 8),
+          Obx(() {
+            final isLoading = auth.isRegistering.value;
+            return FilledButton(
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (!controller.validate()) return;
+                      await auth.register(
+                        username: controller.usernameController.text.trim(),
+                        email: controller.emailController.text.trim(),
+                        password: controller.passwordController.text,
+                      );
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Đăng ký'),
+            );
+          }),
           TextButton(
             onPressed: () => Get.offAllNamed(AppRoutes.login),
-            child: const Text('Already have an account? Login'),
+            child: const Text('Đã có tài khoản? Đăng nhập'),
           ),
         ],
       ),

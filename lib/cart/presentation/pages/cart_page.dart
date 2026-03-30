@@ -1,3 +1,4 @@
+import 'package:demo/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,10 +13,11 @@ class CartPage extends GetView<CartController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text('Giỏ hàng'),
         actions: [
+          const ThemeModeMenuButton(),
           IconButton(
-            tooltip: 'Clear cart',
+            tooltip: 'Xóa giỏ hàng',
             icon: const Icon(Icons.delete_sweep_outlined),
             onPressed: controller.clear,
           ),
@@ -24,7 +26,7 @@ class CartPage extends GetView<CartController> {
       body: SafeArea(
         child: Obx(() {
           if (controller.items.isEmpty) {
-            return const Center(child: Text('Your cart is empty.'));
+            return const Center(child: Text('Giỏ hàng của bạn đang trống.'));
           }
 
           final lines = controller.items.values.toList();

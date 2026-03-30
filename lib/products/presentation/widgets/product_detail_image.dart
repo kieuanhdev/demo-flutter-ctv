@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:demo/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class ProductDetailImage extends StatelessWidget {
@@ -28,7 +29,7 @@ class ProductDetailImage extends StatelessWidget {
       height: 220,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade200,
+        color: context.appCustomColors.imagePlaceholder,
       ),
       child: const Center(child: Icon(Icons.inventory_2_outlined, size: 60)),
     );
