@@ -8,7 +8,7 @@ import 'auth/presentation/controllers/login_form_controller.dart';
 import 'auth/presentation/controllers/register_form_controller.dart';
 import 'auth/presentation/pages/login_page.dart';
 import 'auth/presentation/pages/register_page.dart';
-import 'cart/presentation/pages/cart_page.dart';
+import 'core/navigation/main_shell_page.dart';
 import 'products/domain/entities/product.dart';
 
 import 'products/presentation/controllers/add_product_controller.dart';
@@ -17,7 +17,6 @@ import 'products/presentation/controllers/products_controller.dart';
 import 'products/presentation/pages/add_product_page.dart';
 import 'products/presentation/pages/edit_product_page.dart';
 import 'products/presentation/pages/product_detail_page.dart';
-import 'products/presentation/pages/products_page.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -25,7 +24,6 @@ class AppRoutes {
   static const String register = '/register';
   static const String products = '/products';
   static const String profile = '/profile';
-  static const String cart = '/cart';
   static const String addProduct = '/products/add';
   static const String editProduct = '/products/edit';
   static const String productDetail = '/products/detail';
@@ -55,12 +53,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.products,
-      page: () => const ProductsPage(),
-      middlewares: [AuthMiddleware()],
-    ),
-    GetPage(
-      name: AppRoutes.cart,
-      page: () => const CartPage(),
+      page: () => const MainShellPage(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

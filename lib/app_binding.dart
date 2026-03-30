@@ -20,6 +20,7 @@ import 'cart/domain/usecases/load_cart_usecase.dart';
 import 'cart/domain/usecases/save_cart_usecase.dart';
 import 'cart/presentation/controllers/cart_controller.dart';
 import 'cart/presentation/controllers/cart_fly_target_controller.dart';
+import 'core/navigation/main_nav_controller.dart';
 import 'core/config/api_config.dart';
 import 'core/logger/app_logger.dart';
 import 'products/data/datasources/remote/products_remote_data_source.dart';
@@ -178,6 +179,7 @@ class AppBinding extends Bindings {
       ),
       permanent: true,
     );
+    Get.put<MainNavController>(MainNavController(), permanent: true);
     log.i('Cart layer initialized');
     log.i('All dependencies ready ✓');
   }

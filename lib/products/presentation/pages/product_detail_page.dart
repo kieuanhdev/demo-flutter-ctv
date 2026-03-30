@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app_routes.dart';
-import '../../../cart/presentation/pages/cart_page.dart';
 import '../../../cart/presentation/widgets/add_to_cart_button.dart';
-import '../../../cart/presentation/widgets/cart_icon_button.dart';
 import '../../domain/entities/product.dart';
 import '../widgets/product_action_buttons.dart';
 import '../widgets/product_detail_image.dart';
@@ -21,14 +19,8 @@ class ProductDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chi tiết sản phẩm'),
-        actions: [
-          const ThemeModeMenuButton(),
-          CartIconButton(
-            attachFlyTarget: false,
-            onPressed: () {
-              Get.to(() => const CartPage());
-            },
-          ),
+        actions: const [
+          ThemeModeMenuButton(),
         ],
       ),
       body: SafeArea(

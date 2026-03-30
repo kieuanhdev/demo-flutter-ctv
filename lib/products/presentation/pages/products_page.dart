@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../app_routes.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../../cart/presentation/pages/cart_page.dart';
-import '../../../cart/presentation/widgets/cart_icon_button.dart';
 import '../../domain/entities/product.dart';
 import '../controllers/product_search_bar.dart';
 import '../controllers/products_controller.dart';
@@ -25,11 +23,6 @@ class ProductsPage extends GetView<ProductsController> {
         title: const Text('Sản phẩm'),
         actions: [
           const ThemeModeMenuButton(),
-          CartIconButton(
-            onPressed: () {
-              Get.to(() => const CartPage());
-            },
-          ),
           LogoutButton(authController: auth),
         ],
       ),
