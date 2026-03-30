@@ -35,7 +35,17 @@ Future<void> addProductWithFlyToCart({
   );
 
   if (context.mounted) {
-    Get.snackbar('Đã thêm vào giỏ', product.title);
+    // Một snackbar tại một thời điểm — thêm liên tục chỉ giữ bản mới nhất.
+    Get.closeAllSnackbars();
+    final bottomPad =
+        MediaQuery.paddingOf(context).bottom + kBottomNavigationBarHeight + 8;
+    Get.snackbar(
+      'Đã thêm vào giỏ',
+      product.title,
+      duration: const Duration(milliseconds: 1600),
+      snackPosition: SnackPosition.BOTTOM,
+      margin: EdgeInsets.fromLTRB(12, 0, 12, bottomPad),
+    );
   }
 }
 

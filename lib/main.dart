@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'app_binding.dart';
 import 'app_routes.dart';
+import 'bindings/splash_binding.dart';
 import 'auth/data/datasources/local/auth_session_hive_store.dart';
 import 'cart/data/datasources/local/cart_hive_store.dart';
 
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: themeController.themeMode.value,
-        initialBinding: AppBinding(),
+        initialBinding: SplashBinding(),
         initialRoute: AppRoutes.splash,
         getPages: AppPages.pages,
       ),
