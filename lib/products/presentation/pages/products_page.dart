@@ -5,11 +5,11 @@ import 'package:get/get.dart';
 import '../../../app_routes.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../domain/entities/product.dart';
+import '../products_tab_navigator.dart';
 import '../controllers/product_search_bar.dart';
 import '../controllers/products_controller.dart';
 import '../widgets/logout_button.dart';
 import '../widgets/product_grid.dart';
-import 'product_detail_page.dart';
 
 class ProductsPage extends GetView<ProductsController> {
   const ProductsPage({super.key});
@@ -40,7 +40,10 @@ class ProductsPage extends GetView<ProductsController> {
             child: ProductGrid(
               onTapProduct: (p) {
                 final product = p as Product;
-                Get.to(() => ProductDetailPage(product: product));
+                Navigator.of(context).pushNamed(
+                  ProductsTabNav.detail,
+                  arguments: product,
+                );
               },
             ),
           ),

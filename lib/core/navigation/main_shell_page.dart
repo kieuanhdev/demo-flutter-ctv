@@ -1,7 +1,7 @@
 import 'package:demo/cart/presentation/controllers/cart_controller.dart';
 import 'package:demo/cart/presentation/controllers/cart_fly_target_controller.dart';
 import 'package:demo/cart/presentation/pages/cart_page.dart';
-import 'package:demo/products/presentation/pages/products_page.dart';
+import 'package:demo/products/presentation/products_tab_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,7 +24,7 @@ class MainShellPage extends GetView<MainNavController> {
         body: IndexedStack(
           index: idx,
           children: const [
-            ProductsPage(),
+            ProductsTabNavigator(),
             CartPage(),
           ],
         ),

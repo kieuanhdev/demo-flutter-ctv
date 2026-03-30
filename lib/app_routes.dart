@@ -10,13 +10,10 @@ import 'bindings/add_product_binding.dart';
 import 'bindings/edit_product_binding.dart';
 import 'bindings/login_binding.dart';
 import 'bindings/main_shell_binding.dart';
-import 'bindings/product_detail_binding.dart';
 import 'bindings/register_binding.dart';
 import 'core/navigation/main_shell_page.dart';
-import 'products/domain/entities/product.dart';
 import 'products/presentation/pages/add_product_page.dart';
 import 'products/presentation/pages/edit_product_page.dart';
-import 'products/presentation/pages/product_detail_page.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -26,7 +23,6 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String addProduct = '/products/add';
   static const String editProduct = '/products/edit';
-  static const String productDetail = '/products/detail';
 }
 
 class AppPages {
@@ -63,15 +59,6 @@ class AppPages {
       name: AppRoutes.editProduct,
       page: () => const EditProductPage(),
       binding: EditProductBinding(),
-      middlewares: [AuthMiddleware()],
-    ),
-    GetPage(
-      name: AppRoutes.productDetail,
-      page: () {
-        final product = Get.arguments as Product;
-        return ProductDetailPage(product: product);
-      },
-      binding: ProductDetailBinding(),
       middlewares: [AuthMiddleware()],
     ),
   ];

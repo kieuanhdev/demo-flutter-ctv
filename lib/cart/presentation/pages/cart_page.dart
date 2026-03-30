@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/cart_controller.dart';
+import '../widgets/cart_confirm_dialogs.dart';
 import '../widgets/cart_item_list.dart';
 import '../widgets/cart_summary.dart';
 
@@ -19,7 +20,12 @@ class CartPage extends GetView<CartController> {
           IconButton(
             tooltip: 'Xóa giỏ hàng',
             icon: const Icon(Icons.delete_sweep_outlined),
-            onPressed: controller.clear,
+            onPressed: () async {
+              final ok = await confirmClearEntireCart(context);
+              if (ok && context.mounted) {
+                await controller.clear();
+              }
+            },
           ),
         ],
       ),
