@@ -14,22 +14,17 @@ class AddToCartButton extends GetView<CartController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final qty = controller.items[product.id]?.quantity ?? 0;
-      return Builder(
-        builder: (btnCtx) {
-          return FilledButton.icon(
-            onPressed: () async {
-              await addProductWithFlyToCart(
-                context: context,
-                product: product,
-                startRect: globalBoundsOf(btnCtx),
-              );
-            },
-            icon: const Icon(Icons.add_shopping_cart),
-            label: Text(
-              qty > 0 ? 'Thêm nữa (trong giỏ: $qty)' : 'Thêm vào giỏ',
-            ),
+      return FilledButton.icon(
+        onPressed: () async {
+          await addProductWithFlyToCart(
+            context: context,
+            product: product,
           );
         },
+        icon: const Icon(Icons.add_shopping_cart),
+        label: Text(
+          qty > 0 ? 'Thêm nữa (trong giỏ: $qty)' : 'Thêm vào giỏ',
+        ),
       );
     });
   }

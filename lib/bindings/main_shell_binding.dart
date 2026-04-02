@@ -9,7 +9,6 @@ import '../cart/domain/usecases/clear_cart_usecase.dart';
 import '../cart/domain/usecases/load_cart_usecase.dart';
 import '../cart/domain/usecases/save_cart_usecase.dart';
 import '../cart/presentation/controllers/cart_controller.dart';
-import '../cart/presentation/controllers/cart_fly_target_controller.dart';
 import '../core/logger/app_logger.dart';
 import '../core/navigation/main_nav_controller.dart';
 import '../products/data/datasources/remote/products_remote_data_source.dart';
@@ -30,10 +29,6 @@ class MainShellBinding extends Bindings {
 
     final dio = Get.find<Dio>();
     final authController = Get.find<AuthController>();
-
-    if (!Get.isRegistered<CartFlyTargetController>()) {
-      Get.put(CartFlyTargetController(), permanent: true);
-    }
 
     final productsRepository = ProductsRepositoryImpl(
       ProductsRemoteDataSource(dio),

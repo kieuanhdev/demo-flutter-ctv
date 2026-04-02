@@ -6,4 +6,6 @@ class MainNavController extends GetxController {
   void goToProducts() => currentIndex.value = 0;
 
   void goToCart() => currentIndex.value = 1;
+
+  void goToProfile() => currentIndex.value = 2;
 }

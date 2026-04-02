@@ -24,8 +24,6 @@ class ProductListItem extends StatefulWidget {
 }
 
 class _ProductListItemState extends State<ProductListItem> {
-  final GlobalKey _thumbKey = GlobalKey(debugLabel: 'productThumb');
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -40,31 +38,28 @@ class _ProductListItemState extends State<ProductListItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: RepaintBoundary(
-                  key: _thumbKey,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: widget.product.thumbnail != null
-                        ? CachedNetworkImage(
-                            imageUrl: widget.product.thumbnail!,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, _, _) => Container(
-                              width: double.infinity,
-                              color: context.appCustomColors.imagePlaceholder,
-                              child: const Center(
-                                child: Icon(Icons.broken_image),
-                              ),
-                            ),
-                          )
-                        : Container(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: widget.product.thumbnail != null
+                      ? CachedNetworkImage(
+                          imageUrl: widget.product.thumbnail!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, _, _) => Container(
                             width: double.infinity,
                             color: context.appCustomColors.imagePlaceholder,
                             child: const Center(
-                              child: Icon(Icons.inventory_2_outlined),
+                              child: Icon(Icons.broken_image),
                             ),
                           ),
-                  ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          color: context.appCustomColors.imagePlaceholder,
+                          child: const Center(
+                            child: Icon(Icons.inventory_2_outlined),
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -99,44 +94,35 @@ class _ProductListItemState extends State<ProductListItem> {
                     return Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Builder(
-                          builder: (btnCtx) {
-                            return SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: ElevatedButton(
-                                onPressed: isUpdating
-                                    ? null
-                                    : () async {
-                                        await addProductWithFlyToCart(
-                                          context: context,
-                                          product: widget.product,
-                                          startRect:
-                                              globalBoundsOf(
-                                                _thumbKey.currentContext,
-                                              ) ??
-                                              globalBoundsOf(btnCtx),
-                                        );
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: context
-                                      .appCustomColors
-                                      .addToCartButton,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.zero,
-                                ),
-                                child: isUpdating
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const Icon(Icons.add),
-                              ),
-                            );
-                          },
+                        SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: ElevatedButton(
+                            onPressed: isUpdating
+                                ? null
+                                : () async {
+                                    await addProductWithFlyToCart(
+                                      context: context,
+                                      product: widget.product,
+                                    );
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context
+                                  .appCustomColors
+                                  .addToCartButton,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: isUpdating
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.add),
+                          ),
                         ),
                         if (qty > 0)
                           Positioned(

@@ -1,6 +1,6 @@
 import 'package:demo/cart/presentation/controllers/cart_controller.dart';
-import 'package:demo/cart/presentation/controllers/cart_fly_target_controller.dart';
 import 'package:demo/cart/presentation/pages/cart_page.dart';
+import 'package:demo/auth/presentation/pages/profile_page.dart';
 import 'package:demo/products/presentation/products_tab_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,10 +12,6 @@ class MainShellPage extends GetView<MainNavController> {
 
   @override
   Widget build(BuildContext context) {
-    final fly = Get.isRegistered<CartFlyTargetController>()
-        ? Get.find<CartFlyTargetController>()
-        : null;
-
     return Obx(() {
       final idx = controller.currentIndex.value;
       final cartIcon = _NavCartIcon(selected: idx == 1);
@@ -26,6 +22,7 @@ class MainShellPage extends GetView<MainNavController> {
           children: const [
             ProductsTabNavigator(),
             CartPage(),
+            ProfilePage(),
           ],
         ),
         bottomNavigationBar: NavigationBar(
@@ -38,13 +35,13 @@ class MainShellPage extends GetView<MainNavController> {
               label: 'Sản phẩm',
             ),
             NavigationDestination(
-              icon: fly != null
-                  ? KeyedSubtree(
-                      key: fly.cartIconKey,
-                      child: cartIcon,
-                    )
-                  : cartIcon,
+              icon: cartIcon,
               label: 'Giỏ hàng',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: 'Tài khoản',
             ),
           ],
         ),

@@ -1,6 +1,6 @@
-# Demo — Flutter tutorial app
+# Demo Flutter (Clean Architecture)
 
-Ứng dụng Flutter minh họa **Clean Architecture** theo từng feature, kết hợp luồng **đăng nhập / đăng ký**, **danh sách sản phẩm** (xem, thêm, sửa, tìm kiếm), **giỏ hàng** và gọi **REST API** qua Dio. State và điều hướng dùng **GetX**; dữ liệu cục bộ dùng **Hive** (hộp được mã hóa AES, khóa lưu bằng **flutter_secure_storage**).
+Ứng dụng Flutter demo theo **Clean Architecture (feature-based)**: `auth` (đăng nhập/đăng ký/session), `products` (danh sách/tìm kiếm/chi tiết/thêm-sửa-xóa), `cart` (giỏ hàng) và `profile` (tài khoản). State & điều hướng dùng **GetX**; dữ liệu cục bộ dùng **Hive** và được **mã hóa AES**.
 
 ## Yêu cầu
 
@@ -16,44 +16,43 @@ flutter run
 
 ## Cấu hình API
 
-Base URL mặc định nằm trong `lib/core/config/api_config.dart`:
+`baseUrl` mặc định nằm trong `lib/core/config/api_config.dart`:
 
 ```dart
-static const String baseUrl = 'http://10.0.2.2:8000';
+class ApiConfig {
+  static const String baseUrl = 'https://api.kieuanhdev.id.vn/';
+}
 ```
 
-- **Android Emulator:** `10.0.2.2` trỏ về máy host (thường dùng khi API chạy trên `localhost:8000` của máy dev).
-- **Thiết bị thật / iOS Simulator:** đổi `baseUrl` sang IP LAN của máy chạy API (ví dụ `http://192.168.1.x:8000`) hoặc URL phù hợp môi trường của bạn.
+- **Android Emulator:** nếu backend chạy trên `localhost` của máy dev, thường dùng `10.0.2.2`.
+- **Thiết bị thật / iOS Simulator:** dùng IP LAN của máy chạy backend (ví dụ `http://192.168.1.x:8000`) hoặc URL phù hợp môi trường của bạn.
 
-Ở chế độ debug, log HTTP có thể bật qua **dio_log** (xem `app_routes.dart` / cấu hình Dio trong binding).
+Ở chế độ debug, log HTTP có thể bật qua **dio_log** (tuỳ cấu hình trong project).
 
-## Cấu trúc `lib/`
+## Cấu trúc thư mục (tóm tắt)
 
-| Thư mục | Nội dung |
-|--------|----------|
-| `auth/` | Đăng nhập, đăng ký, session, middleware bảo vệ route |
-| `products/` | Sản phẩm: remote data source, repository, use case, UI |
-| `cart/` | Giỏ hàng: Hive + remote, controller, trang giỏ |
-| `core/` | `api_config`, xử lý lỗi, logger |
-| `app_binding.dart` | Đăng ký dependency GetX |
-| `app_routes.dart` | `GetMaterialApp` pages + splash |
-| `hive_encryption.dart` | Mở hộp Hive mã hóa (AES) |
+- `auth/`: đăng nhập, đăng ký, session, middleware bảo vệ route
+- `products/`: sản phẩm (UI + controller + use case + repository)
+- `cart/`: giỏ hàng (Hive cache + controller + UI)
+- `core/`: cấu hình API, logger, error mapper
+- `app_routes.dart`: khai báo route (GetX) + splash
+- `hive_encryption.dart`: mã hóa AES cho Hive boxes
 
-**Clean Architecture (theo feature):** tách **domain** (entity, interface repository, use case — không phụ thuộc Flutter/API) → **data** (DTO, remote/local data source, repository implementation) → **presentation** (controller GetX, widget, page). Luồng phụ thuộc hướng vào trong: UI gọi use case, use case gọi repository abstract, implementation nối API/Hive.
+**Clean Architecture (theo feature):** domain (không phụ thuộc Flutter/API) → data (remote/local + repository impl) → presentation (controller/widget/page). UI gọi use case; use case gọi repository abstract; implementation nối API/Hive.
 
-Luồng hoạt động chi tiết (theo chức năng, màn hình, load more / pull-to-refresh): [docs/APP_FLOWS.md](docs/APP_FLOWS.md).
+Xem `docs/APP_FLOWS.md` để xem luồng theo code hiện tại (có sơ đồ).
 
-## Tính năng chính
+## Tính năng
 
-- Splash → kiểm tra session → điều hướng login hoặc danh sách sản phẩm
-- Đăng ký / đăng nhập; route cần auth dùng `AuthMiddleware`
-- Danh sách sản phẩm, chi tiết, thêm/sửa, tìm kiếm
-- Giỏ hàng (lưu cục bộ đã mã hóa; đồng bộ với API khi có)
+- Splash: kiểm tra session → điều hướng login hoặc danh sách sản phẩm
+- Auth: đăng ký/đăng nhập; route bảo vệ bằng `AuthMiddleware`; đăng xuất xoá session
+- Sản phẩm: danh sách, tìm kiếm, chi tiết, thêm/sửa/xoá
+- Giỏ hàng: thêm và chỉnh số lượng; lưu local đã mã hóa AES; đồng bộ khi có API
 
-## Dependencies chính
+## Dependency chính
 
-Xem `pubspec.yaml`: `get`, `dio`, `dio_log`, `hive` / `hive_flutter`, `flutter_secure_storage`, `cached_network_image`.
+Xem `pubspec.yaml`: `get`, `dio`, `hive` (`hive_flutter`), `flutter_secure_storage`, `cached_network_image` (và `dio_log` nếu bật).
 
----
+## Lưu ý
 
-Dự án dùng cho mục đích học và demo; điều chỉnh URL API và backend cho đúng contract trước khi chạy end-to-end.
+Dự án dùng cho mục đích học và demo; cần chỉnh `baseUrl` và backend cho khớp contract trước khi chạy end-to-end.
